@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>músicas para Marina</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:    #07090f;
+    --blue1: #4a7fd4;
+    --blue2: #2a5aad;
+    --text:  #dce8f8;
+    --muted: #4a6080;
+    --soft:  #8aadd4;
+    --border:#131e30;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:'DM Mono',monospace;
+    min-height:100vh; padding:48px 20px 100px; overflow-x:hidden;
+  }
+  .particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .p { position:absolute; border-radius:50%; background:var(--blue1); opacity:0; animation:float linear infinite; }
+  @keyframes float {
+    0%   { opacity:0; transform:translateY(0) scale(1); }
+    10%  { opacity:0.07; }
+    90%  { opacity:0.04; }
+    100% { opacity:0; transform:translateY(-100vh) scale(0.3); }
+  }
+  .container { max-width:660px; margin:0 auto; position:relative; z-index:1; }
+
+  /* HEADER */
+  header { margin-bottom:52px; animation:fadeUp 1s ease both; }
+  .label { font-size:9px; letter-spacing:5px; text-transform:uppercase; color:var(--blue1); margin-bottom:20px; display:block; opacity:0.7; }
+  h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(44px,9vw,72px); line-height:1.0; font-weight:300; letter-spacing:-1px; }
+  h1 em { font-style:italic; color:var(--blue1); font-weight:300; }
+
+  .declaration {
+    margin-top:28px; padding:28px 32px;
+    border-left:2px solid var(--blue2);
+    background:linear-gradient(to right,rgba(42,90,173,0.07),transparent);
+    border-radius:0 12px 12px 0;
+    animation:fadeUp 1.1s ease both 0.2s;
+  }
+  .declaration p { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:300; line-height:1.9; color:var(--soft); }
+  .declaration p em { font-style:italic; color:var(--text); font-weight:400; }
+  .declaration .assinatura { display:block; margin-top:18px; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); }
+
+  .divider { width:1px; height:40px; background:linear-gradient(to bottom,var(--blue1),transparent); margin:32px 0; opacity:0.3; }
+  .subtitle { font-size:10px; color:var(--muted); letter-spacing:3px; }
+
+  .playlist-btn {
+    background: linear-gradient(135deg, #1DB954, #1ed760);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+  }
+  .playlist-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+    background: linear-gradient(135deg, #1ed760, #1DB954);
+  }
+
+  /* SECTIONS */
+  .section-title { font-size:8px; letter-spacing:6px; text-transform:uppercase; color:var(--blue2); margin-bottom:4px; margin-top:44px; opacity:0.6; }
+  .section-line { width:100%; height:1px; background:linear-gradient(to right,var(--border),transparent); margin-bottom:4px; }
+
+  /* TRACKS */
+  .track {
+    display:flex; align-items:center; gap:16px;
+    padding:14px 12px; border-radius:10px;
+    border-bottom:1px solid #0e1a2a;
+    cursor:pointer; transition:all 0.25s ease;
+    animation:fadeUp 0.6s ease both;
+  }
+  .track:hover { background:rgba(42,90,173,0.06); padding-left:20px; }
+  .track:hover .track-name { color:var(--blue1); }
+  .track.active { background:linear-gradient(to right,rgba(42,90,173,0.1),transparent); border-bottom-color:rgba(42,90,173,0.1); }
+  .track.active .track-name { color:var(--blue1); }
+  .track.active .track-num { display:none; }
+  .track.active .eq-icon { display:flex; }
+  .track-index { width:26px; text-align:center; position:relative; flex-shrink:0; }
+  .track-num { font-size:10px; color:var(--muted); }
+  .eq-icon { display:none; gap:2px; align-items:flex-end; height:14px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); }
+  .eq-bar { width:2.5px; background:var(--blue1); border-radius:1px; animation:eq 0.7s ease-in-out infinite alternate; }
+  .eq-bar:nth-child(1) { height:5px; animation-delay:0s; }
+  .eq-bar:nth-child(2) { height:12px; animation-delay:0.25s; }
+  .eq-bar:nth-child(3) { height:7px; animation-delay:0.5s; }
+
+  /* ALBUM ART THUMBNAIL on track */
+  .track-thumb { width:40px; height:40px; border-radius:6px; object-fit:cover; flex-shrink:0; background:var(--border); }
+
+  .track-info { flex:1; min-width:0; }
+  .track-name { font-family:'Cormorant Garamond',serif; font-size:16px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:400; margin-bottom:3px; transition:color 0.2s; }
+  .track-artist { font-size:9px; color:var(--muted); letter-spacing:1px; }
+  .track-tag { font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:3px 8px; border-radius:20px; flex-shrink:0; }
+  .tag-rap    { background:rgba(42,90,173,0.12); color:var(--blue1); border:1px solid rgba(42,90,173,0.25); }
+  .tag-soul   { background:rgba(74,127,212,0.1);  color:var(--soft);  border:1px solid rgba(74,127,212,0.2); }
+  .tag-trap   { background:rgba(26,58,122,0.2);   color:#6a9fd8;      border:1px solid rgba(42,90,173,0.2); }
+  .tag-trapbr { background:rgba(10,30,80,0.25);   color:#5a8fc8;      border:1px solid rgba(42,90,173,0.2); }
+
+  /* FOOTER */
+  .footer-note { margin-top:64px; padding-top:36px; border-top:1px solid var(--border); text-align:center; }
+  .footer-note p { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; font-size:17px; color:var(--muted); line-height:2; }
+  .footer-note p span { color:var(--blue1); }
+  .footer-small { display:block; font-size:9px; color:#1e3050; letter-spacing:3px; margin-top:16px; text-transform:uppercase; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes eq     { from{transform:scaleY(0.3)} to{transform:scaleY(1)} }
+  .track:nth-child(1){animation-delay:.05s}.track:nth-child(2){animation-delay:.10s}
+  .track:nth-child(3){animation-delay:.15s}.track:nth-child(4){animation-delay:.20s}
+  .track:nth-child(5){animation-delay:.25s}.track:nth-child(6){animation-delay:.30s}
+  .track:nth-child(7){animation-delay:.35s}.track:nth-child(8){animation-delay:.40s}
+  .track:nth-child(9){animation-delay:.45s}.track:nth-child(10){animation-delay:.50s}
+  .track:nth-child(11){animation-delay:.55s}.track:nth-child(12){animation-delay:.60s}
+  .track:nth-child(13){animation-delay:.65s}.track:nth-child(14){animation-delay:.70s}
+  .track:nth-child(15){animation-delay:.75s}.track:nth-child(16){animation-delay:.80s}
+  .track:nth-child(17){animation-delay:.85s}.track:nth-child(18){animation-delay:.90s}
+</style>
+</head>
+<body>
+<div class="particles" id="particles"></div>
+<div class="container">
+
+  <header>
+    <span class="label">uma playlist só sua</span>
+    <h1>músicas para<br><em>Marina</em></h1>
+    <button class="playlist-btn" id="btnPlaylist" title="Abrir playlist completa no Spotify">🎵 Ouvir playlist completa</button>
+    <div class="declaration">
+      <p>
+        eu só não sei o que falar.<br>
+        então preferi fazer isso —<br>
+        algumas coisas merecem <em>mais cuidado</em>.<br><br>
+        cada música aqui é uma coisa diferente<br>
+        penso em você.
+      </p>
+      <span class="assinatura">— com carinho, Renan</span>
+    </div>
+    <div class="divider"></div>
+    <p class="subtitle">18 faixas · feitas com intenção</p>
+  </header>
+
+  <!-- DRAKE -->
+  <p class="section-title">Drake</p><div class="section-line"></div>
+
+  <!-- Yebba's Heartbreak -->
+  <div class="track" data-spotify="1PDP7mLiAMwhfmgIwzhOm2">
+    <div class="track-index"><span class="track-num">01</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851cfab1a77e85fb2b9ca53f71d" alt="">
+    <div class="track-info"><div class="track-name">Yebba's Heartbreak</div><div class="track-artist">Drake ft. YEBBA</div></div>
+    <span class="track-tag tag-rap">Drake</span>
+  </div>
+
+  <!-- Hold On, We're Going Home -->
+  <div class="track" data-spotify="6jdOi5U5LBzQrc4c1VT983">
+    <div class="track-index"><span class="track-num">02</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851082e2c87b8a5ab3c40fdfb61" alt="">
+    <div class="track-info"><div class="track-name">Hold On, We're Going Home</div><div class="track-artist">Drake ft. Majid Jordan</div></div>
+    <span class="track-tag tag-rap">Drake</span>
+  </div>
+
+  <!-- From Time -->
+  <div class="track" data-spotify="2WC4sK0ryyysQhtDok9Ytr">
+    <div class="track-index"><span class="track-num">03</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048511275db0fab2735e58d42281b" alt="">
+    <div class="track-info"><div class="track-name">From Time</div><div class="track-artist">Drake ft. Jhené Aiko</div></div>
+    <span class="track-tag tag-rap">melodic</span>
+  </div>
+
+  <!-- Passionfruit -->
+  <div class="track" data-spotify="5mCPDVBb16L4XQwDdbRUpz">
+    <div class="track-index"><span class="track-num">04</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851bc71e6ba0e46d40c8f72abce" alt="">
+    <div class="track-info"><div class="track-name">Passionfruit</div><div class="track-artist">Drake</div></div>
+    <span class="track-tag tag-rap">melodic</span>
+  </div>
+
+  <!-- Doing It Wrong -->
+  <div class="track" data-spotify="4eSGSqP2TZvvX0kadZZttM">
+    <div class="track-index"><span class="track-num">05</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048511275db0fab2735e58d42281b" alt="">
+    <div class="track-info"><div class="track-name">Doing It Wrong</div><div class="track-artist">Drake</div></div>
+    <span class="track-tag tag-soul">soul</span>
+  </div>
+
+  <!-- FRANK OCEAN -->
+  <p class="section-title">Frank Ocean</p><div class="section-line"></div>
+
+  <!-- Thinking Bout You -->
+  <div class="track" data-spotify="7DfFc7a6Rwfi3YQMRbDMau">
+    <div class="track-index"><span class="track-num">06</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048519293f8b89c2c2ae37e33d4c8" alt="">
+    <div class="track-info"><div class="track-name">Thinking Bout You</div><div class="track-artist">Frank Ocean</div></div>
+    <span class="track-tag tag-soul">Frank</span>
+  </div>
+
+  <!-- Self Control -->
+  <div class="track" data-spotify="5GUYJTQap5F3RDQiCOJhrS">
+    <div class="track-index"><span class="track-num">07</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048519293f8b89c2c2ae37e33d4c8" alt="">
+    <div class="track-info"><div class="track-name">Self Control</div><div class="track-artist">Frank Ocean</div></div>
+    <span class="track-tag tag-soul">soul</span>
+  </div>
+
+  <!-- Ivy -->
+  <div class="track" data-spotify="2ZWlPOoWh0626oTaHrnl2a">
+    <div class="track-index"><span class="track-num">08</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048519293f8b89c2c2ae37e33d4c8" alt="">
+    <div class="track-info"><div class="track-name">Ivy</div><div class="track-artist">Frank Ocean</div></div>
+    <span class="track-tag tag-soul">soul</span>
+  </div>
+
+  <!-- Godspeed -->
+  <div class="track" data-spotify="34xTFwjPQ1dC6uJmleno7x">
+    <div class="track-index"><span class="track-num">09</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d000048519293f8b89c2c2ae37e33d4c8" alt="">
+    <div class="track-info"><div class="track-name">Godspeed</div><div class="track-artist">Frank Ocean</div></div>
+    <span class="track-tag tag-soul">soul</span>
+  </div>
+
+  <!-- DON TOLIVER -->
+  <p class="section-title">Don Toliver</p><div class="section-line"></div>
+
+  <!-- What You Need -->
+  <div class="track" data-spotify="527k23H0A4Q0UJN3vGs0Da">
+    <div class="track-index"><span class="track-num">10</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851e1404b7bb8ad95e0d66efd48" alt="">
+    <div class="track-info"><div class="track-name">After Party</div><div class="track-artist">Don Toliver</div></div>
+    <span class="track-tag tag-trap">Don</span>
+  </div>
+
+  <!-- Drugs N Hella Melodies -->
+  <div class="track" data-spotify="0IX5OFffosy8wk16m1IFCa">
+    <div class="track-index"><span class="track-num">11</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851e1404b7bb8ad95e0d66efd48" alt="">
+    <div class="track-info"><div class="track-name">Drugs N Hella Melodies</div><div class="track-artist">Don Toliver</div></div>
+    <span class="track-tag tag-trap">melodic</span>
+  </div>
+
+  <!-- Outerspace -->
+  <div class="track" data-spotify="7AzlLxHn24DxjgQX73F9fU">
+    <div class="track-index"><span class="track-num">12</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851f6b5e9b93db8f3615c0b19a5" alt="">
+    <div class="track-info"><div class="track-name">No Idea</div><div class="track-artist">Don Toliver</div></div>
+    <span class="track-tag tag-trap">trap</span>
+  </div>
+
+  <!-- KENDRICK -->
+  <p class="section-title">Kendrick Lamar</p><div class="section-line"></div>
+
+  <!-- Love. -->
+  <div class="track" data-spotify="6PGoSes0D9eUDeeAafB2As">
+    <div class="track-index"><span class="track-num">13</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851d28db8b0c2a90f9a4e2b1f4a" alt="">
+    <div class="track-info"><div class="track-name">Love.</div><div class="track-artist">Kendrick Lamar ft. Zacari</div></div>
+    <span class="track-tag tag-rap">Kendrick</span>
+  </div>
+
+  <!-- Purple Hearts -->
+  <div class="track" data-spotify="1REVvAphiSTJyKQ1fDpHa4">
+    <div class="track-index"><span class="track-num">14</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851e4196e8aee8b3b1e44e7a6e3" alt="">
+    <div class="track-info"><div class="track-name">Purple Hearts</div><div class="track-artist">Kendrick Lamar ft. Summer Walker</div></div>
+    <span class="track-tag tag-rap">melodic</span>
+  </div>
+
+  <!-- LOYALTY. -->
+  <div class="track" data-spotify="6SwRhMLwNqEi6alNPVG00n">
+    <div class="track-index"><span class="track-num">15</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851d28db8b0c2a90f9a4e2b1f4a" alt="">
+    <div class="track-info"><div class="track-name">LOYALTY.</div><div class="track-artist">Kendrick Lamar ft. Rihanna</div></div>
+    <span class="track-tag tag-rap">rap</span>
+  </div>
+
+  <!-- TRAP BR -->
+  <p class="section-title">Trap BR</p><div class="section-line"></div>
+
+  <div class="track" data-spotify="7pMfMzfYSTbNxj5lJEbQIp">
+    <div class="track-index"><span class="track-num">16</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851f2df1e5b13b6e70adeedc79c" alt="">
+    <div class="track-info"><div class="track-name">V de Vilão</div><div class="track-artist">Matuê ft. Xamã</div></div>
+    <span class="track-tag tag-trapbr">trap br</span>
+  </div>
+  <div class="track" data-spotify="0qsKefQyXCzaxjHbOcd8IU">
+    <div class="track-index"><span class="track-num">17</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851f2df1e5b13b6e70adeedc79c" alt="">
+    <div class="track-info"><div class="track-name">333</div><div class="track-artist">Matuê</div></div>
+    <span class="track-tag tag-trapbr">trap br</span>
+  </div>
+  <div class="track" data-spotify="6QsHhB0W9GtLF3cI7mUVkQ">
+    <div class="track-index"><span class="track-num">18</span><div class="eq-icon"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div></div>
+    <img class="track-thumb" src="https://i.scdn.co/image/ab67616d00004851f2df1e5b13b6e70adeedc79c" alt="">
+    <div class="track-info"><div class="track-name">1993</div><div class="track-artist">Matuê</div></div>
+    <span class="track-tag tag-trapbr">trap br</span>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-note">
+    <p>
+      não sei exatamente quando aconteceu —<br>
+      mas eu sei que <span>você importa pra mim</span>.<br>
+      espero que essas músicas te contem<br>
+      o que eu ainda não disse em palavras.
+    </p>
+    <span class="footer-small">18 faixas · para Marina ·, Renan</span>
+  </div>
+</div>
+
+<script>
+  // Particles
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div'); p.className = 'p';
+    const s = Math.random()*3+1;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${12+Math.random()*20}s;animation-delay:${Math.random()*15}s;`;
+    pc.appendChild(p);
+  }
+
+  // Elements
+  const tracks = Array.from(document.querySelectorAll('.track'));
+  const btnPlaylist = document.getElementById('btnPlaylist');
+
+  // Botão da playlist completa
+  btnPlaylist.addEventListener('click', () => {
+    // Abre a primeira música para começar
+    const firstTrack = tracks[0];
+    const spotifyId = firstTrack.dataset.spotify;
+    const spotifyUrl = `https://open.spotify.com/track/${spotifyId}`;
+    window.open(spotifyUrl, '_blank');
+
+    alert('🎵 Começando a playlist!\n\n• Clique em qualquer música para ouvi-la\n• Cada música abre no Spotify Web Player\n• Aproveite todas as 18 músicas! 💕');
+  });
+
+  // Clique nas músicas individuais
+  tracks.forEach(track => {
+    track.addEventListener('click', () => {
+      const spotifyId = track.dataset.spotify;
+      const spotifyUrl = `https://open.spotify.com/track/${spotifyId}`;
+      window.open(spotifyUrl, '_blank');
+    });
+  });
+
+  // Fallback para imagens
+  tracks.forEach(t => {
+    const img = t.querySelector('.track-thumb');
+    if (!img) return;
+    img.onerror = function() {
+      this.style.display='none';
+      const div=document.createElement('div');
+      div.style.cssText='width:40px;height:40px;border-radius:6px;background:linear-gradient(135deg,#1a3a7a,#2a5aad);display:flex;align-items:center;justify-content:center;font-size:18px;color:#dce8f8;flex-shrink:0;font-weight:bold;';
+      div.textContent = '♪';
+      this.parentNode.insertBefore(div,this);
+    };
+  });
+</script>
+</body>
+</html>
